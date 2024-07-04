@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let posts = JSON.parse(localStorage.getItem('posts'));
+            let postId = JSON.parse(localStorage.getItem('postId'));
+            let post = posts.find(post => post.id === postId);
+            let postHTML = `
+                <h1>${post.title}</h1>
+                <p>${post.content}</p>
+            `;
+            document.body.innerHTML = postHTML;
+        });
+    </script>
+</body>
+</html>

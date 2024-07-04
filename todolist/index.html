@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" id="todo-container">
+        <header>
+            <h1>#todo</h1>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="#" class="active">All</a></li>
+                <li><a href="#">Active</a></li>
+                <li><a href="#">Completed</a></li>
+            </ul>
+        </nav>
+        <div class="input-container">
+            <input type="text" id="todo-input" placeholder="add details">
+            <button onclick="addTask('todo-list')">Add</button>
+        </div>
+        <div class="task-list" id="todo-list"></div>
+        <div class="delete-container">
+            <button onclick="deleteCompleted('todo-list')">delete all</button>
+        </div>
+    </div>
+    <div class="container" id="doing-container">
+        <header>
+            <h1>#doing</h1>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="#" class="active">All</a></li>
+                <li><a href="#">Active</a></li>
+                <li><a href="#">Completed</a></li>
+            </ul>
+        </nav>
+        <div class="input-container">
+            <input type="text" id="doing-input" placeholder="add details">
+            <button onclick="addTask('doing-list')">Add</button>
+        </div>
+        <div class="task-list" id="doing-list"></div>
+        <div class="delete-container">
+            <button onclick="deleteCompleted('doing-list')">delete all</button>
+        </div>
+    </div>
+    <div class="container" id="done-container">
+        <header>
+            <h1>#done</h1>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="#" class="active">All</a></li>
+                <li><a href="#">Active</a></li>
+                <li><a href="#">Completed</a></li>
+            </ul>
+        </nav>
+        <div class="input-container">
+            <input type="text" id="done-input" placeholder="add details">
+            <button onclick="addTask('done-list')">Add</button>
+        </div>
+        <div class="task-list" id="done-list"></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
