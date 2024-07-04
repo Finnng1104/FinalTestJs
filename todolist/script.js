@@ -6,8 +6,7 @@ function addTask(listId) {
     if (taskText === '') return;
 
     const task = createTaskElement(taskText, false);
-    const taskList = document.getElementById(listId);
-    taskList.appendChild(task);
+    document.getElementById(listId).appendChild(task);
 
     input.value = '';
     saveTasks();
@@ -16,27 +15,20 @@ function addTask(listId) {
 function loadTasks() {
     const tasks = JSON.parse(localStorage.getItem('tasks')) || { 'todo-list': [], 'doing-list': [], 'done-list': [] };
 
-    for (const [listId, taskArray] of Object.entries(tasks)) {
+    Object.entries(tasks).forEach(([listId, taskArray]) => {
         const taskList = document.getElementById(listId);
         taskArray.forEach(task => {
             const taskElement = createTaskElement(task.text, task.completed);
             taskList.appendChild(taskElement);
         });
-    }
+    });
 
-    makeSortable('todo-list');
-    makeSortable('doing-list');
-    makeSortable('done-list');
+    ['todo-list', 'doing-list', 'done-list'].forEach(makeSortable);
 }
-
 
 function createTaskElement(taskText, completed) {
     const task = document.createElement('div');
-    task.className = 'task';
-    if (completed) {
-        task.classList.add('completed');
-    }
-
+    task.className = `task${completed ? ' completed' : ''}`;
     task.innerHTML = `
         <div class="handle">
             <input type="checkbox" ${completed ? 'checked' : ''}>
@@ -45,14 +37,12 @@ function createTaskElement(taskText, completed) {
         </div>
     `;
 
-    const checkbox = task.querySelector('input[type="checkbox"]');
-    checkbox.onchange = function () {
-        task.classList.toggle('completed', checkbox.checked);
+    task.querySelector('input[type="checkbox"]').onchange = function () {
+        task.classList.toggle('completed', this.checked);
         saveTasks();
     };
 
-    const removeButton = task.querySelector('.remove');
-    removeButton.onclick = () => {
+    task.querySelector('.remove').onclick = () => {
         task.remove();
         saveTasks();
     };
@@ -61,51 +51,32 @@ function createTaskElement(taskText, completed) {
 }
 
 function makeSortable(columnId) {
-    const list = document.getElementById(columnId);
-    Sortable.create(list, {
+    Sortable.create(document.getElementById(columnId), {
         group: 'tasks',
         animation: 150,
-        onEnd: function (evt) {
-            const itemEl = evt.item;
-            const originList = evt.from;
-            const destinationList = evt.to;
-
-            if (destinationList.id === 'done-list') {
-                itemEl.querySelector('input[type="checkbox"]').checked = true;
-                itemEl.classList.add('completed');
-            } else if (originList.id === 'done-list') {
-                itemEl.querySelector('input[type="checkbox"]').checked = false;
-                itemEl.classList.remove('completed');
-            }
+        onEnd: function ({ item, from, to }) {
+            item.querySelector('input[type="checkbox"]').checked = to.id === 'done-list';
+            item.classList.toggle('completed', to.id === 'done-list');
             saveTasks();
         }
     });
 }
 
 function saveTasks() {
-    const lists = ['todo-list', 'doing-list', 'done-list'];
-    const tasks = {};
-
-    lists.forEach(listId => {
-        const taskList = document.getElementById(listId);
-        tasks[listId] = [];
-        taskList.querySelectorAll('.task').forEach(task => {
-            const taskText = task.querySelector('label').textContent;
-            const completed = task.querySelector('input[type="checkbox"]').checked;
-            tasks[listId].push({ text: taskText, completed });
-        });
-    });
+    const tasks = ['todo-list', 'doing-list', 'done-list'].reduce((acc, listId) => {
+        acc[listId] = Array.from(document.getElementById(listId).querySelectorAll('.task')).map(task => ({
+            text: task.querySelector('label').textContent,
+            completed: task.querySelector('input[type="checkbox"]').checked
+        }));
+        return acc;
+    }, {});
 
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-
 function deleteCompleted(listId) {
-    const taskList = document.getElementById(listId);
-    taskList.querySelectorAll('.task').forEach(task => {
-        if (task.querySelector('input[type="checkbox"]').checked) {
-            task.remove();
-        }
+    document.getElementById(listId).querySelectorAll('.task').forEach(task => {
+        if (task.querySelector('input[type="checkbox"]').checked) task.remove();
     });
     saveTasks();
 }

@@ -598,3 +598,74 @@ document.addEventListener('DOMContentLoaded', function() {
 		setLocalPosts(posts);
 	}
 });
+
+function showResults(results){
+    let html = `<table>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                    </tr>`;
+    results.forEach(result => {
+        html += `
+            <tr>
+                <td>${result.id}</td>
+                <td>${result.first_name + " " + result.last_name}</td> 
+                <td>${result.email}</td>   
+            </tr>
+        `;
+    });
+    html += '</table>';
+    document.getElementById('results').innerHTML = html;    
+}
+
+function showposts(posts){
+	let html = `<table>
+					<tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Creation Date</th>
+                </tr>`;
+	posts.forEach(post => {
+		html += `
+		<tr>
+			<td><a href="#" onclick="setPostId(${post.id})">${post.id}</a></td>
+			<td>${post.title}</td>
+			<td>${post.created_at}</td>
+		</tr>
+		`;
+	});
+	html += '</table>';
+	document.getElementById('results').innerHTML = html;    
+
+}
+
+function search(){
+    let input = document.getElementById('search').value;
+    input = input.toLowerCase();
+    let users = getLocalUsers();
+    
+    let results = users.filter(user => {
+        return user.first_name.toLowerCase().includes(input) || user.last_name.toLowerCase().includes(input) || user.email.toLowerCase().includes(input);
+    });
+    showResults(results);
+}
+
+function searchemail(){
+	let input = document.getElementById('searchemail').value;
+	console.log(input);
+	input = input.toLowerCase();
+	console.log(input);
+	let users = getLocalUsers();
+	let posts = getLocalPosts();
+	let idUser = "";
+	for (let i = 0; i < users.length; i++) {
+		if (users[i].email == input) {
+			idUser = users[i].id;
+		}
+	}
+	let results = posts.filter(post => {
+		return post.user_id == idUser;
+	});
+	showposts(results);
+}
